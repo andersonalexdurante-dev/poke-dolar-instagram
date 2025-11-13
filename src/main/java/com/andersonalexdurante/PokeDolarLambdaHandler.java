@@ -4,7 +4,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.andersonalexdurante.dto.DollarVariationDTO;
 import com.andersonalexdurante.dto.PokemonDTO;
-import com.andersonalexdurante.dto.RandomSelection;
 import com.andersonalexdurante.interfaces.IDollarService;
 import com.andersonalexdurante.services.*;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.net.URL;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,15 +39,19 @@ public class PokeDolarLambdaHandler implements RequestHandler<Object, Void> {
     BedrockService bedrockService;
     @Inject
     InstagramService instagramService;
-    @Inject
-    RandomnessService randomnessService;
 
     @Override
     public Void handleRequest(Object event, Context context) {
         String requestId = UUID.randomUUID().toString();
         MDC.put("requestId", requestId);
 
-        LOGGER.info("[{}] [START] Executing Pokemon Video Generator Lambda", requestId);
+        LOGGER.info("[{}] [START] Executing PokeDolar Post Generator Lambda", requestId);
+
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        if (today == DayOfWeek.SATURDAY || today == DayOfWeek.SUNDAY) {
+            LOGGER.info("[{}] Weekend detected. Skipping execution.", requestId);
+            return null;
+        }
 
         try {
             String dollarExchangeRate = this.dollarService.getDollarExchangeRate(requestId);

@@ -46,7 +46,7 @@ public class WiseApiDollarService implements IDollarService {
             if (response.statusCode() == 200) {
                 JsonNode rootNode = this.objectMapper.readTree(response.body());
                 String exchangeRate = rootNode.get(0).path("rate").asText();
-                String formattedBid = exchangeRate.substring(0, 5).replace('.', ',');
+                String formattedBid = String.format("%05.3f", Double.parseDouble(exchangeRate));
 
                 LOGGER.info("[{}] [SUCCESS] Wise API Dollar exchange rate fetched: BRL ${}", requestId, formattedBid);
                 return formattedBid;
