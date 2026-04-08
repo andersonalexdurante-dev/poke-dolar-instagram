@@ -1,5 +1,7 @@
-*
-!target/*-runner
-!target/*-runner.jar
-!target/lib/*
-!target/quarkus-app/*
+# Para build completo, incluir fontes
+.git
+.gitignore
+README.md
+target
+.idea
+*.iml
